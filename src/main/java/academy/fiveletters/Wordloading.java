@@ -13,12 +13,12 @@ public final class Wordloading {
     private Wordloading() {}
 
     public static List<String> load(String resPath) {
-        @Nullable InputStream stream = Wordloading.class.getResourceAsStream(resPath);
-        if (stream == null) {
+        @Nullable InputStream istream = Wordloading.class.getResourceAsStream(resPath);
+        if (istream == null) {
             throw new IllegalArgumentException("Wordloading   | Файл не найден по: " + resPath);
         }
 
-        try (var reader = new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8))) {
+        try (var reader = new BufferedReader(new InputStreamReader(istream, StandardCharsets.UTF_8))) {
             List<String> words = reader.lines()
                     .map(String::strip)
                     .filter(line -> !line.isEmpty() && !line.startsWith("#"))

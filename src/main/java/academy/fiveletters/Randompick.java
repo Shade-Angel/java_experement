@@ -6,13 +6,13 @@ import java.util.Random;
 public final class Randompick {
     private Randompick() {}
 
-    public static String pick(List<String> words, long seed) {
-        if (words == null || words.isEmpty()) {
+    public static String pick(List<String> text, long seed) {
+        if (text == null || text.isEmpty()) {
             throw new IllegalArgumentException(" Randompick.java  |  Словарь пуст");
         }
 
         Random random = new Random(seed);
-        int idx = random.nextInt(words.size());
-        return words.get(idx);
+        int idx = random.nextInt(text.size());
+        return text.get(idx);
     }
 }

@@ -6,16 +6,16 @@ import java.util.List;
 public final class Game {
     private final String ans;
     private final int maxAttemts;
-    private int attempsUsed;
-    private final List<String> history;
+    private int attemptsUsed;
+    private final List<String> attemptsHistory;
 
     private Status status;
 
     private Game(String ans, int maxAttemts) {
         this.ans = ans;
         this.maxAttemts = maxAttemts;
-        this.attempsUsed = 0;
-        this.history = new ArrayList<>();
+        this.attemptsUsed = 0;
+        this.attemptsHistory = new ArrayList<>();
         this.status = Status.IN_PROGRESS;
     }
 
@@ -39,12 +39,12 @@ public final class Game {
         return maxAttemts;
     }
 
-    public int attempsUsed() {
-        return attempsUsed;
+    public int attemptsUsed() {
+        return attemptsUsed;
     }
 
     public List<String> history() {
-        return List.copyOf(history);
+        return List.copyOf(attemptsHistory);
     }
 
     public Status status() {
@@ -56,7 +56,7 @@ public final class Game {
     }
 
     public int attemRemain() {
-        return maxAttemts - attempsUsed;
+        return maxAttemts - attemptsUsed;
     }
 
     public void recordAttempt(String guess) {
@@ -64,12 +64,12 @@ public final class Game {
             throw new IllegalStateException("Игра закончилась.");
         }
 
-        history.add(guess);
-        attempsUsed++;
+        attemptsHistory.add(guess);
+        attemptsUsed++;
 
         if (guess.equals(ans)) {
             status = Status.WIN;
-        } else if (attempsUsed >= maxAttemts) {
+        } else if (attemptsUsed >= maxAttemts) {
             status = Status.LOSE;
         }
     }
