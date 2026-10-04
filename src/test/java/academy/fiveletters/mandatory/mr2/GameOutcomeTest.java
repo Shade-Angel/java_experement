@@ -1,8 +1,11 @@
 package academy.fiveletters.mandatory.mr2;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.junit.jupiter.api.Disabled;
+import academy.fiveletters.Game;
+import academy.fiveletters.Status;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,31 +13,55 @@ import org.junit.jupiter.api.Test;
 @DisplayName("MR2. Победа и поражение")
 class GameOutcomeTest {
 
+    private final List<String> dict = List.of("озеро", "сорок", "арбуз", "книга");
+
+    private Game newGame(String answer, int maxAttempts) {
+        return Game.createWithAnswer(answer, maxAttempts, dict);
+    }
+
     @Test
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("Угаданное слово переводит сессию в статус WIN")
     void correctGuessWinsTheGame() {
-        fail("Тест не реализован");
+        Game game = newGame("озеро", 6);
+
+        game.applyGuess("книга");
+        game.applyGuess("озеро");
+
+        assertThat(game.status()).isEqualTo(Status.WIN);
+        assertThat(game.isFinish()).isTrue();
     }
 
     @Test
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("После 6 неудачных попыток сессия переходит в статус LOSE")
     void sixFailedAttemptsLoseTheGame() {
-        fail("Тест не реализован");
+        Game game = newGame("озеро", 6);
+
+        for (int i = 0; i < 6; i++) {
+            game.applyGuess("книга");
+        }
+
+        assertThat(game.status()).isEqualTo(Status.LOSE);
+        assertThat(game.isFinish()).isTrue();
+        assertThat(game.attemptsUsed()).isEqualTo(6);
     }
 
     @Test
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("При поражении показывается загаданное слово")
     void answerIsRevealedOnLoss() {
-        fail("Тест не реализован");
+        Game game = newGame("озеро", 1);
+
+        game.applyGuess("книга");
+
+        assertThat(game.status()).isEqualTo(Status.LOSE);
+        assertThat(game.ans()).isEqualTo("озеро");
     }
 
     @Test
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("Завершённая партия больше не принимает попытки")
     void finishedGameRejectsFurtherGuesses() {
-        fail("Тест не реализован");
+        Game game = newGame("озеро", 6);
+        game.applyGuess("озеро");
+
+        assertThatThrownBy(() -> game.applyGuess("книга")).isInstanceOf(IllegalStateException.class);
     }
 }

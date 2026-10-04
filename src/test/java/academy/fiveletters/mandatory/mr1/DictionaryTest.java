@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import academy.fiveletters.Game;
+import academy.fiveletters.WordValidator;
 import academy.fiveletters.Wordloading;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
@@ -25,7 +26,10 @@ class DictionaryTest {
     void allWordsAreExactlyFiveLettersLong() {
         List<String> words = Wordloading.load("/dictionary.txt");
 
-        assertThat(words).allSatisfy(word -> assertThat(word).hasSize(5).matches("[а-я]{5}"));
+        assertThat(words).allSatisfy(word -> {
+            assertThat(word).hasSize(5);
+            assertThat(WordValidator.isGood(word)).isTrue();
+        });
     }
 
     @Test

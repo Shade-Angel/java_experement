@@ -1,8 +1,10 @@
 package academy.fiveletters.mandatory.mr2;
 
-import static org.junit.jupiter.api.Assertions.fail;
+import static org.assertj.core.api.Assertions.assertThat;
 
-import org.junit.jupiter.api.Disabled;
+import academy.fiveletters.Game;
+import academy.fiveletters.GuessRessult;
+import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -12,40 +14,72 @@ import org.junit.jupiter.params.provider.ValueSource;
 @DisplayName("MR2. Валидация ввода")
 class GuessValidationTest {
 
+    private final List<String> dict = List.of("озеро", "сорок", "арбуз");
+
+    private Game newGame() {
+        return Game.createWithAnswer("озеро", 6, dict);
+    }
+
     @ParameterizedTest
     @ValueSource(strings = {"дом", "домики", ""})
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("Слово не из 5 букв отклоняется: \"{0}\"")
     void wordOfWrongLengthIsRejected(String guess) {
-        fail("Тест не реализован");
+        Game game = newGame();
+
+        GuessRessult result = game.applyGuess(guess);
+
+        assertThat(result.isValid()).isFalse();
+        assertThat(game.attemptsUsed()).isZero();
     }
 
     @ParameterizedTest
     @ValueSource(strings = {"дом12", "дом!!", "до ма"})
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("Ввод с не-буквами отклоняется: \"{0}\"")
     void nonLetterInputIsRejected(String guess) {
-        fail("Тест не реализован");
+        Game game = newGame();
+
+        GuessRessult result = game.applyGuess(guess);
+
+        assertThat(result.isValid()).isFalse();
+        assertThat(game.attemptsUsed()).isZero();
     }
 
     @Test
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("Слово, которого нет в словаре, отклоняется")
     void wordOutsideDictionaryIsRejected() {
-        fail("Тест не реализован");
+        Game game = newGame();
+
+        GuessRessult result = game.applyGuess("книга");
+
+        assertThat(result.isValid()).isFalse();
+        assertThat(game.attemptsUsed()).isZero();
     }
 
     @Test
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("Некорректный ввод не тратит попытку")
     void invalidInputDoesNotConsumeAttempt() {
-        fail("Тест не реализован");
+        Game game = newGame();
+
+        game.applyGuess("дом");
+        game.applyGuess("дом12");
+        game.applyGuess("книга");
+        assertThat(game.attemptsUsed()).isZero();
+
+        game.applyGuess("арбуз");
+        assertThat(game.attemptsUsed()).isEqualTo(1);
     }
 
     @Test
-    @Disabled("MR2: реализуй тест и удали эту строку")
     @DisplayName("Ввод не зависит от регистра: \"ОЗЕРО\" и \"озеро\" обрабатываются одинаково")
     void inputIsCaseInsensitive() {
-        fail("Тест не реализован");
+        Game upperGame = newGame();
+        Game lowerGame = newGame();
+
+        GuessRessult upper = upperGame.applyGuess("ОЗЕРО");
+        GuessRessult lower = lowerGame.applyGuess("озеро");
+
+        assertThat(upper.isValid()).isTrue();
+        assertThat(upper.feedback()).isEqualTo(lower.feedback());
+        assertThat(upperGame.status()).isEqualTo(lowerGame.status());
     }
 }
