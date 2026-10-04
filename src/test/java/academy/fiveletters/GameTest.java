@@ -9,21 +9,22 @@ import org.junit.jupiter.api.Test;
 
 @DisplayName("MR1. Проверка модели сессии")
 public class GameTest {
-    @Test
-    @DisplayName("Завершенная партия не принимает новые попытки")
-    void finshGame() {
-        List<String> dict = List.of("клава", "телефон", "ноутбук", "javascript", "vite");
-        Game game = Game.startGame(dict, 6, 23L);
 
-        assertThat(game.status()).isEqualByComparingTo(Status.IN_PROGRESS);
+    @Test
+    @DisplayName("Завершённая партия не принимает новые попытки")
+    void finishedGameDoesNotAcceptNewAttempts() {
+        List<String> dict = List.of("озеро", "сорок", "арбуз", "книга");
+        Game game = Game.createWithAnswer("озеро", 6, dict);
+
+        assertThat(game.status()).isEqualTo(Status.IN_PROGRESS);
         assertThat(game.attemptsUsed()).isZero();
-        assertThat(game.history()).isEmpty();
-        game.recordAttempt(game.ans());
+
+        game.applyGuess("озеро");
 
         assertThat(game.status()).isEqualTo(Status.WIN);
         assertThat(game.isFinish()).isTrue();
-        assertThatThrownBy(() -> game.recordAttempt("телефон")).isInstanceOf(IllegalStateException.class);
+        assertThatThrownBy(() -> game.applyGuess("книга")).isInstanceOf(IllegalStateException.class);
         assertThat(game.attemptsUsed()).isEqualTo(1);
-        assertThat(game.history()).containsExactly(game.ans());
+        assertThat(game.history()).containsExactly("озеро");
     }
 }
