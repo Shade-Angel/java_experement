@@ -2,7 +2,6 @@ package academy.fiveletters;
 
 import java.util.List;
 import java.util.Scanner;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,8 +99,8 @@ public final class Main {
         }
 
         if (game.status() == Status.WIN) {
-            System.out.println("Победа! Слово угадано за " + game.attemptsUsed()
-                    + " " + getAttemptWord(game.attemptsUsed()));
+            System.out.println(
+                    "Победа! Слово угадано за " + game.attemptsUsed() + " " + getAttemptWord(game.attemptsUsed()));
         } else {
             System.out.println("Неудача. Загаданное слово: " + game.ans());
         }
@@ -138,7 +137,8 @@ public final class Main {
         }
 
         if (ans == null || guess == null) {
-            System.err.println("Main.java | Использование: --check --answer <слово> --guess <попытка> [--seed <число>]");
+            System.err.println(
+                    "Main.java | Использование: --check --answer <слово> --guess <попытка> [--seed <число>]");
             return;
         }
 
