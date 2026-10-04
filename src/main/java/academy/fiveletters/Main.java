@@ -1,7 +1,11 @@
 package academy.fiveletters;
 
+import java.io.UncheckedIOException;
+import java.nio.charset.StandardCharsets;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -9,8 +13,9 @@ import org.slf4j.LoggerFactory;
 public final class Main {
 
     private static final Logger LOG = LoggerFactory.getLogger(Main.class);
-    private static final String WORD = "/words.txt";
+    private static final String WORD = "/dictionary.txt";
     private static final int MAX_ATTEMPTS = 6;
+    private static final int FOUR = 4;
 
     private Main() {}
 
@@ -25,16 +30,18 @@ public final class Main {
         List<String> dict;
         try {
             dict = Wordloading.load(WORD);
-        } catch (Exception err) {
+        } catch (IllegalArgumentException | UncheckedIOException err) {
             System.err.println("Main.java | Ошибка загрузки файла в список: " + err);
+            System.err.flush();
             return;
         }
 
-        Scanner scan = new Scanner(System.in);
+        Scanner scan = new Scanner(System.in, StandardCharsets.UTF_8);
         boolean isRun = true;
 
         System.out.println("Добро пожаловать в игру!");
         System.out.println(String.format("Нужно угадать слово из 5 букв за %d попыток.", MAX_ATTEMPTS));
+        System.out.flush();
         System.out.println();
         System.out.println("✅ - означает, что буква на своём месте");
         System.out.println("🟡 - означает, что буква есть, но не там");
@@ -46,24 +53,40 @@ public final class Main {
             System.out.println("1. Новая игра.");
             System.out.println("2. Выход из программы.");
             System.out.print("Ваш выбор: ");
+            System.out.flush();
 
-            String in = scan.nextLine().trim();
+            if (!scan.hasNextLine()) {
+                break;
+            }
 
-            switch (in) {
-                case "1":
-                    playGame(scan, dict);
-                    break;
-                case "2":
-                    isRun = false;
-                    System.out.println("Спасибо за игру!");
-                    break;
-                default:
-                    System.out.println("Некорректный выбор.");
-                    System.out.println();
-                    break;
+            try {
+                String in = scan.nextLine().trim();
+                isRun = handleMenuChoice(in, scan, dict);
+            } catch (NoSuchElementException e) {
+                break;
             }
         }
         scan.close();
+    }
+
+    private static boolean handleMenuChoice(String in, Scanner scan, List<String> dict) {
+        return switch (in) {
+            case "1" -> {
+                playGame(scan, dict);
+                yield true;
+            }
+            case "2" -> {
+                System.out.println("Спасибо за игру!");
+                System.out.flush();
+                yield false;
+            }
+            default -> {
+                System.out.println("Некорректный выбор.");
+                System.out.println();
+                System.out.flush();
+                yield true;
+            }
+        };
     }
 
     private static void playGame(Scanner scan, List<String> diction) {
@@ -111,48 +134,71 @@ public final class Main {
         if (cnt == 1) {
             return "попытку";
         }
-        if (cnt >= 2 && cnt <= 4) {
+        if (cnt >= 2 && cnt <= FOUR) {
             return "попытки";
         }
         return "попыток";
     }
 
     private static void runCheck(String[] args) {
+        CheckArgs parsed = parseCheckArgs(args);
+        if (parsed == null) {
+            return;
+        }
+
+        List<String> dict =
+                parsed.answer.equals(parsed.guess) ? List.of(parsed.answer) : List.of(parsed.answer, parsed.guess);
+        Game game = Game.createWithAnswer(parsed.answer, MAX_ATTEMPTS, dict);
+
+        GuessRessult res = game.applyGuess(parsed.guess);
+
+        if (!res.isValid()) {
+            System.out.println("Неверный guess.");
+        } else {
+            System.out.println(res.feedback());
+            System.out.printf("STATUS: %s%n", game.status());
+            System.out.printf("ANSWER: %s%n", game.ans());
+        }
+        System.out.flush();
+    }
+
+    @Nullable
+    private static CheckArgs parseCheckArgs(String[] args) {
         String ans = null;
         String guess = null;
 
-        for (int i = 1; i < args.length; i++) {
-            if ("--answer".equals(args[i]) && i + 1 < args.length) {
-                ans = args[++i].toLowerCase();
-            } else if ("--guess".equals(args[i]) && i + 1 < args.length) {
-                guess = args[++i].toLowerCase();
-            } else if ("--seed".equals(args[i]) && i + 1 < args.length) {
+        int i = 1;
+        while (i < args.length) {
+            String arg = args[i];
+            if ("--answer".equals(arg) && i + 1 < args.length) {
+                ans = args[i + 1].toLowerCase();
+                i += 2;
+            } else if ("--guess".equals(arg) && i + 1 < args.length) {
+                guess = args[i + 1].toLowerCase();
+                i += 2;
+            } else if ("--seed".equals(arg) && i + 1 < args.length) {
                 try {
-                    Long.parseLong(args[++i]);
+                    Long.parseLong(args[i + 1]);
                 } catch (NumberFormatException e) {
-                    System.err.println("Main.java | Неверное значение seed: " + args[i]);
-                    return;
+                    System.err.println("Main.java | Неверное значение seed: " + args[i + 1]);
+                    System.err.flush();
+                    return null;
                 }
+                i += 2;
+            } else {
+                i++;
             }
         }
 
         if (ans == null || guess == null) {
             System.err.println(
                     "Main.java | Использование: --check --answer <слово> --guess <попытка> [--seed <число>]");
-            return;
+            System.err.flush();
+            return null;
         }
 
-        List<String> dict = ans.equals(guess) ? List.of(ans) : List.of(ans, guess);
-        Game game = Game.createWithAnswer(ans, MAX_ATTEMPTS, dict);
-
-        GuessRessult res = game.applyGuess(guess);
-
-        if (!res.isValid()) {
-            System.out.println("Неверный guess.");
-        } else {
-            System.out.println(res.feedback());
-            System.out.println("STATUS: " + game.status());
-            System.out.println("ANSWER: " + game.ans());
-        }
+        return new CheckArgs(ans, guess);
     }
+
+    private record CheckArgs(String answer, String guess) {}
 }
