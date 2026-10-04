@@ -15,7 +15,7 @@ public final class WordValidator {
         }
         for (int i = 0; i < WORD_LEN; i++) {
             char chr = word.charAt(i);
-            if (chr < 'а' || chr > 'я') {
+            if (chr < 'а' || (chr > 'я' && chr != 'ё')) {
                 return false;
             }
         }

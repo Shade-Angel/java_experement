@@ -15,7 +15,7 @@ public final class Wordloading {
     public static List<String> load(String resPath) {
         @Nullable InputStream istream = Wordloading.class.getResourceAsStream(resPath);
         if (istream == null) {
-            throw new IllegalArgumentException("Wordloading   | Файл не найден по: " + resPath);
+            throw new IllegalArgumentException("Wordloading | Файл не найден по: " + resPath);
         }
 
         try (var reader = new BufferedReader(new InputStreamReader(istream, StandardCharsets.UTF_8))) {
@@ -25,11 +25,11 @@ public final class Wordloading {
                     .toList();
 
             if (words.isEmpty()) {
-                throw new IllegalArgumentException("Wordloading   | Файл пуст");
+                throw new IllegalArgumentException("Wordloading | Файл пуст");
             }
             return words;
         } catch (IOException e) {
-            throw new UncheckedIOException("Wordloading   | Файл не прочитан ", e);
+            throw new UncheckedIOException("Wordloading | Файл не прочитан ", e);
         }
     }
 }
