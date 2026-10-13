@@ -1,5 +1,8 @@
-package academy.fiveletters;
+package academy.fiveletters.game;
 
+import academy.fiveletters.words.Dictionary;
+import academy.fiveletters.words.Randompick;
+import academy.fiveletters.words.WordValidator;
 import java.util.ArrayList;
 import java.util.List;
 

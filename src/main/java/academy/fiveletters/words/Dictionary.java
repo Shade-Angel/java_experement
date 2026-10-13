@@ -1,4 +1,4 @@
-package academy.fiveletters;
+package academy.fiveletters.words;
 
 import java.util.List;
 import java.util.Set;

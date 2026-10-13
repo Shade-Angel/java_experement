@@ -1,4 +1,4 @@
-package academy.fiveletters;
+package academy.fiveletters.words;
 
 import java.io.BufferedReader;
 import java.io.IOException;

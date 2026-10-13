@@ -2,9 +2,9 @@ package academy.fiveletters.mandatory.mr1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import academy.fiveletters.Dictionary;
-import academy.fiveletters.Randompick;
-import academy.fiveletters.Wordloading;
+import academy.fiveletters.words.Dictionary;
+import academy.fiveletters.words.Randompick;
+import academy.fiveletters.words.Wordloading;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

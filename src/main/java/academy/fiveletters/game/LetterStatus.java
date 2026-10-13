@@ -1,4 +1,4 @@
-package academy.fiveletters;
+package academy.fiveletters.game;
 
 public enum LetterStatus {
     EXACT,

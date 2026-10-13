@@ -1,4 +1,4 @@
-package academy.fiveletters;
+package academy.fiveletters.words;
 
 public final class WordValidator {
     private static final int WORD_LEN = 5;

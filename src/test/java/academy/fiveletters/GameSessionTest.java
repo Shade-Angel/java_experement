@@ -2,6 +2,8 @@ package academy.fiveletters;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import academy.fiveletters.game.Game;
+import academy.fiveletters.words.Dictionary;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

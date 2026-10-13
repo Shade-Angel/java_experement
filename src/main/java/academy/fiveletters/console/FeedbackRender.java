@@ -1,5 +1,6 @@
-package academy.fiveletters;
+package academy.fiveletters.console;
 
+import academy.fiveletters.game.LetterStatus;
 import java.util.List;
 
 public final class FeedbackRender {
