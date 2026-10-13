@@ -165,7 +165,7 @@ public final class Main {
                 continue;
             }
 
-            System.out.println(result.feedback() + " " + color(BOLD, input.toLowerCase()));
+            System.out.println(FeedbackRender.render(result.statuses()) + " " + color(BOLD, input.toLowerCase()));
             System.out.println(color(YELLOW, "Осталось попыток: " + game.attemptsRemaining()));
             System.out.println();
             System.out.flush();
@@ -249,7 +249,7 @@ public final class Main {
         for (String guess : parsed.guesses()) {
             GuessRessult res = game.applyGuess(guess);
             if (res.isValid()) {
-                System.out.println(res.feedback());
+                System.out.println(FeedbackRender.render(res.statuses()));
             } else {
                 System.out.println("Неверный guess: " + guess);
             }

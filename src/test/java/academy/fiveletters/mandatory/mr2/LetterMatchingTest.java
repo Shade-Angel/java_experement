@@ -3,6 +3,7 @@ package academy.fiveletters.mandatory.mr2;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import academy.fiveletters.Dictionary;
+import academy.fiveletters.FeedbackRender;
 import academy.fiveletters.Game;
 import academy.fiveletters.GuessRessult;
 import org.junit.jupiter.api.DisplayName;
@@ -24,7 +25,7 @@ class LetterMatchingTest {
         GuessRessult result = game.applyGuess("арбуз");
 
         assertThat(result.isValid()).isTrue();
-        assertThat(result.feedback()).isEqualTo("❌🟡❌❌🟡");
+        assertThat(FeedbackRender.render(result.statuses())).isEqualTo("❌🟡❌❌🟡");
     }
 
     @Test
@@ -35,7 +36,7 @@ class LetterMatchingTest {
         GuessRessult result = game.applyGuess("озеро");
 
         assertThat(result.isValid()).isTrue();
-        assertThat(result.feedback()).isEqualTo("✅✅✅✅✅");
+        assertThat(FeedbackRender.render(result.statuses())).isEqualTo("✅✅✅✅✅");
     }
 
     @Test
@@ -46,7 +47,7 @@ class LetterMatchingTest {
         GuessRessult result = game.applyGuess("оооом");
 
         assertThat(result.isValid()).isTrue();
-        assertThat(result.feedback()).isEqualTo("❌✅❌✅❌");
+        assertThat(FeedbackRender.render(result.statuses())).isEqualTo("❌✅❌✅❌");
     }
 
     @Test
@@ -57,6 +58,6 @@ class LetterMatchingTest {
         GuessRessult result = game.applyGuess("книга");
 
         assertThat(result.isValid()).isTrue();
-        assertThat(result.feedback()).isEqualTo("❌❌❌❌❌");
+        assertThat(FeedbackRender.render(result.statuses())).isEqualTo("❌❌❌❌❌");
     }
 }

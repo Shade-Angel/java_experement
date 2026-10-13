@@ -1,11 +1,13 @@
 package academy.fiveletters;
 
-public record GuessRessult(String feedback, boolean isValid) {
+import java.util.List;
+
+public record GuessRessult(List<LetterStatus> statuses, boolean isValid) {
     public static GuessRessult invalid() {
-        return new GuessRessult("", false);
+        return new GuessRessult(List.of(), false);
     }
 
-    public static GuessRessult valid(String feedback) {
-        return new GuessRessult(feedback, true);
+    public static GuessRessult valid(List<LetterStatus> statuses) {
+        return new GuessRessult(List.copyOf(statuses), true);
     }
 }

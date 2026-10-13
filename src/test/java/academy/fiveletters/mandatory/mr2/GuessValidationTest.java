@@ -79,7 +79,7 @@ class GuessValidationTest {
         GuessRessult lower = lowerGame.applyGuess("озеро");
 
         assertThat(upper.isValid()).isTrue();
-        assertThat(upper.feedback()).isEqualTo(lower.feedback());
+        assertThat(upper.statuses()).isEqualTo(lower.statuses());
         assertThat(upperGame.status()).isEqualTo(lowerGame.status());
     }
 }
