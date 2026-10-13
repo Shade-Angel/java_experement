@@ -27,4 +27,22 @@ public class GameTest {
         assertThat(game.attemptsUsed()).isEqualTo(1);
         assertThat(game.history()).containsExactly("озеро");
     }
+
+
+    @Test 
+    @DisplayName("Игрок если проигрывает")
+    void playerLoss(){
+        List<String> dict = List.of("озеро", "сорок", "арбуз", "книга");
+        Game game = Game.createWithAnswer("озеро", 2, dict);
+
+        game.applyGuess("арбуз");
+        assertThat(game.status()).isEqualTo(Status.IN_PROGRESS);
+        game.applyGuess("сорок");
+
+        assertThat(game.status()).isEqualTo(Status.LOSE);
+        assertThat(game.isFinish()).isTrue();
+        assertThat(game.attemptsUsed()).isEqualTo(2);
+        assertThat(game.attemptsRemaining()).isZero();
+        assertThatThrownBy(() -> game.applyGuess("книга")).isInstanceOf(IllegalStateException.class);
+    }
 }
