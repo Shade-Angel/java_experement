@@ -1,9 +1,10 @@
-package academy.fiveletters;
+package academy.fiveletters.game;
 
+import academy.fiveletters.words.Dictionary;
+import academy.fiveletters.words.Randompick;
+import academy.fiveletters.words.WordValidator;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class Game {
     private static final int WORD_LEN = 5;
@@ -13,33 +14,34 @@ public final class Game {
     private final List<String> attemptsHistory;
 
     private Status status;
-    private final Set<String> diction;
+    private final Dictionary dictionary;
 
-    private Game(String ans, int maxAttemts, Set<String> diction) {
+    private Game(String ans, int maxAttemts, Dictionary dictionary) {
         this.ans = ans;
         this.maxAttempts = maxAttemts;
         this.attemptsUsed = 0;
         this.attemptsHistory = new ArrayList<>();
         this.status = Status.IN_PROGRESS;
-        this.diction = diction;
+        this.dictionary = dictionary;
     }
 
-    public static Game startGame(List<String> dict, int maxAttemts, long seed) {
-        if (dict == null || dict.isEmpty()) {
-            throw new IllegalArgumentException(" Game.java  |  Словарь пуст!");
-        }
+    public static Game startGame(Dictionary dictionary, int maxAttemts, long seed) {
         if (maxAttemts <= 0) {
             throw new IllegalArgumentException(" Game.java |   maxAttempts должен быть больше 0");
         }
 
-        String ans = Randompick.pick(dict, seed).toLowerCase();
-        Set<String> dictSet = dict.stream().map(String::toLowerCase).collect(Collectors.toSet());
-        return new Game(ans, maxAttemts, dictSet);
+        String ans = Randompick.pick(dictionary, seed);
+        return new Game(ans, maxAttemts, dictionary);
     }
 
-    public static Game createWithAnswer(String answer, int maxAttempts, List<String> dict) {
-        Set<String> dictSet = dict.stream().map(String::toLowerCase).collect(Collectors.toSet());
-        return new Game(answer, maxAttempts, dictSet);
+    public static Game createWithAnswer(String answer, int maxAttempts, Dictionary dictionary) {
+        if (maxAttempts <= 0) {
+            throw new IllegalArgumentException(" Game.java |   maxAttempts должен быть больше 0");
+        }
+        if (!dictionary.containsWord(answer)) {
+            throw new IllegalArgumentException("Game | ответ нет в словаре: " + answer);
+        }
+        return new Game(answer, maxAttempts, dictionary);
     }
 
     public String ans() {
@@ -75,19 +77,19 @@ public final class Game {
             throw new IllegalStateException("Игра закончилась.");
         }
 
-        String normalGuess = guess.strip().toLowerCase();
+        String normalGuess = WordValidator.narmalsize(guess);
 
         if (!isValidGuess(normalGuess)) {
             return GuessRessult.invalid();
         }
 
-        String feedbackStr = calculateFeedback(normalGuess);
+        List<LetterStatus> statuses = evaluate(normalGuess);
         recordValidGuess(normalGuess);
-        return GuessRessult.valid(feedbackStr);
+        return GuessRessult.valid(statuses);
     }
 
     private boolean isValidGuess(String normalGuess) {
-        return WordValidator.isGood(normalGuess) && diction.contains(normalGuess);
+        return WordValidator.isGood(normalGuess) && dictionary.containsWord(normalGuess);
     }
 
     private void recordValidGuess(String normalGuess) {
@@ -104,42 +106,38 @@ public final class Game {
         }
     }
 
-    private String calculateFeedback(String guess) {
-        char[] ansChar = ans.toCharArray();
-        char[] guessChar = guess.toCharArray();
-        String[] feedback = new String[WORD_LEN];
+    private List<LetterStatus> evaluate(String guess) {
+        LetterStatus[] statuses = new LetterStatus[WORD_LEN];
         boolean[] used = new boolean[WORD_LEN];
-
-        markExactMatches(guessChar, ansChar, feedback, used);
-        markPartialMatches(guessChar, ansChar, feedback, used);
-
-        return String.join("", feedback);
+        markExactMatches(guess, statuses, used);
+        markPartialMatches(guess, statuses, used);
+        return List.of(statuses);
     }
 
-    private void markExactMatches(char[] guessChar, char[] ansChar, String[] feedback, boolean[] used) {
+    private void markExactMatches(String guess, LetterStatus[] statuses, boolean[] used) {
         for (int i = 0; i < WORD_LEN; i++) {
-            if (guessChar[i] == ansChar[i]) {
-                feedback[i] = "✅";
+            if (guess.charAt(i) == ans.charAt(i)) {
+                statuses[i] = LetterStatus.EXACT;
                 used[i] = true;
             }
         }
     }
 
-    private void markPartialMatches(char[] guessChar, char[] ansChar, String[] feedback, boolean[] used) {
+    private void markPartialMatches(String guess, LetterStatus[] statuses, boolean[] used) {
         for (int i = 0; i < WORD_LEN; i++) {
-            if (feedback[i] == null) {
-                feedback[i] = findPartialMatch(guessChar[i], ansChar, used);
+            if (statuses[i] == null) {
+                statuses[i] = findPartialMatch(guess.charAt(i), used);
             }
         }
     }
 
-    private String findPartialMatch(char guessChar, char[] ansChar, boolean[] used) {
+    private LetterStatus findPartialMatch(char letter, boolean[] used) {
         for (int j = 0; j < WORD_LEN; j++) {
-            if (!used[j] && guessChar == ansChar[j]) {
+            if (!used[j] && letter == ans.charAt(j)) {
                 used[j] = true;
-                return "🟡";
+                return LetterStatus.PRESENT;
             }
         }
-        return "❌";
+        return LetterStatus.ABSENT;
     }
 }

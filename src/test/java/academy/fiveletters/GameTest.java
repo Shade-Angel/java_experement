@@ -3,7 +3,9 @@ package academy.fiveletters;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
+import academy.fiveletters.game.Game;
+import academy.fiveletters.game.Status;
+import academy.fiveletters.words.Dictionary;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +15,7 @@ public class GameTest {
     @Test
     @DisplayName("Завершённая партия не принимает новые попытки")
     void finishedGameDoesNotAcceptNewAttempts() {
-        List<String> dict = List.of("озеро", "сорок", "арбуз", "книга");
+        Dictionary dict = Dictionary.of("озеро", "сорок", "арбуз", "книга");
         Game game = Game.createWithAnswer("озеро", 6, dict);
 
         assertThat(game.status()).isEqualTo(Status.IN_PROGRESS);
@@ -26,5 +28,22 @@ public class GameTest {
         assertThatThrownBy(() -> game.applyGuess("книга")).isInstanceOf(IllegalStateException.class);
         assertThat(game.attemptsUsed()).isEqualTo(1);
         assertThat(game.history()).containsExactly("озеро");
+    }
+
+    @Test
+    @DisplayName("Игрок если проигрывает")
+    void playerLoss() {
+        Dictionary dict = Dictionary.of("озеро", "сорок", "арбуз", "книга");
+        Game game = Game.createWithAnswer("озеро", 2, dict);
+
+        game.applyGuess("арбуз");
+        assertThat(game.status()).isEqualTo(Status.IN_PROGRESS);
+        game.applyGuess("сорок");
+
+        assertThat(game.status()).isEqualTo(Status.LOSE);
+        assertThat(game.isFinish()).isTrue();
+        assertThat(game.attemptsUsed()).isEqualTo(2);
+        assertThat(game.attemptsRemaining()).isZero();
+        assertThatThrownBy(() -> game.applyGuess("книга")).isInstanceOf(IllegalStateException.class);
     }
 }

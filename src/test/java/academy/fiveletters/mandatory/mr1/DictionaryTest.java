@@ -3,9 +3,9 @@ package academy.fiveletters.mandatory.mr1;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import academy.fiveletters.Game;
-import academy.fiveletters.WordValidator;
-import academy.fiveletters.Wordloading;
+import academy.fiveletters.words.Dictionary;
+import academy.fiveletters.words.WordValidator;
+import academy.fiveletters.words.Wordloading;
 import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -17,8 +17,8 @@ class DictionaryTest {
     @Test
     @DisplayName("Словарь содержит не меньше 50 слов")
     void dictionaryContainsAtLeastFiftyWords() {
-        List<String> text = Wordloading.load("/dictionary.txt");
-        assertThat(text).hasSizeGreaterThanOrEqualTo(50);
+        Dictionary dictionary = new Dictionary(Wordloading.load("/dictionary.txt"));
+        assertThat(dictionary.size()).isGreaterThanOrEqualTo(50);
     }
 
     @Test
@@ -35,6 +35,6 @@ class DictionaryTest {
     @Test
     @DisplayName("Пустой словарь приводит к ошибке, а не к запуску игры без слова")
     void emptyDictionaryIsRejected() {
-        assertThatThrownBy(() -> Game.startGame(List.of(), 6, 42L)).isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> new Dictionary(List.of())).isInstanceOf(IllegalArgumentException.class);
     }
 }
