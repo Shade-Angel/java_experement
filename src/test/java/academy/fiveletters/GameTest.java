@@ -3,7 +3,6 @@ package academy.fiveletters;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,7 @@ public class GameTest {
     @Test
     @DisplayName("Завершённая партия не принимает новые попытки")
     void finishedGameDoesNotAcceptNewAttempts() {
-        List<String> dict = List.of("озеро", "сорок", "арбуз", "книга");
+        Dictionary dict = Dictionary.of("озеро", "сорок", "арбуз", "книга");
         Game game = Game.createWithAnswer("озеро", 6, dict);
 
         assertThat(game.status()).isEqualTo(Status.IN_PROGRESS);
@@ -31,7 +30,7 @@ public class GameTest {
     @Test
     @DisplayName("Игрок если проигрывает")
     void playerLoss() {
-        List<String> dict = List.of("озеро", "сорок", "арбуз", "книга");
+        Dictionary dict = Dictionary.of("озеро", "сорок", "арбуз", "книга");
         Game game = Game.createWithAnswer("озеро", 2, dict);
 
         game.applyGuess("арбуз");

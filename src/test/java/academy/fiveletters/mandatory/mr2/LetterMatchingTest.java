@@ -2,9 +2,9 @@ package academy.fiveletters.mandatory.mr2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import academy.fiveletters.Dictionary;
 import academy.fiveletters.Game;
 import academy.fiveletters.GuessRessult;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -12,14 +12,14 @@ import org.junit.jupiter.api.Test;
 @DisplayName("MR2. Проверка букв")
 class LetterMatchingTest {
 
-    private Game newGame(String answer, List<String> dict) {
+    private Game newGame(String answer, Dictionary dict) {
         return Game.createWithAnswer(answer, 6, dict);
     }
 
     @Test
     @DisplayName("Базовый случай: загадано \"озеро\", ввод \"арбуз\" -> ❌❌❌")
     void basicCase() {
-        Game game = newGame("озеро", List.of("озеро", "арбуз", "сорок", "книга"));
+        Game game = newGame("озеро", Dictionary.of("озеро", "арбуз", "сорок", "книга"));
 
         GuessRessult result = game.applyGuess("арбуз");
 
@@ -30,7 +30,7 @@ class LetterMatchingTest {
     @Test
     @DisplayName("Полное совпадение: загадано \"озеро\", ввод \"озеро\" -> ✅✅✅✅✅")
     void exactMatch() {
-        Game game = newGame("озеро", List.of("озеро", "арбуз", "сорок", "книга"));
+        Game game = newGame("озеро", Dictionary.of("озеро", "арбуз", "сорок", "книга"));
 
         GuessRessult result = game.applyGuess("озеро");
 
@@ -41,7 +41,7 @@ class LetterMatchingTest {
     @Test
     @DisplayName("Повторяющиеся буквы: загадано \"сорок\", ввод \"оооом\" -> 🟡❌❌✅❌")
     void repeatedLettersAreNotDoubleCounted() {
-        Game game = newGame("сорок", List.of("сорок", "оооом", "озеро", "арбуз"));
+        Game game = newGame("сорок", Dictionary.of("сорок", "оооом", "озеро", "арбуз"));
 
         GuessRessult result = game.applyGuess("оооом");
 
@@ -52,7 +52,7 @@ class LetterMatchingTest {
     @Test
     @DisplayName("Ни одна буква не подошла: все позиции ❌")
     void noMatchingLetters() {
-        Game game = newGame("озеро", List.of("озеро", "арбуз", "сорок", "книга"));
+        Game game = newGame("озеро", Dictionary.of("озеро", "арбуз", "сорок", "книга"));
 
         GuessRessult result = game.applyGuess("книга");
 

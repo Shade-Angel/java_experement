@@ -2,7 +2,6 @@ package academy.fiveletters;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public final class Game {
     private static final int WORD_LEN = 5;
@@ -12,33 +11,34 @@ public final class Game {
     private final List<String> attemptsHistory;
 
     private Status status;
-    private final Set<String> diction;
+    private final Dictionary dictionary;
 
-    private Game(String ans, int maxAttemts, Set<String> diction) {
+    private Game(String ans, int maxAttemts, Dictionary dictionary) {
         this.ans = ans;
         this.maxAttempts = maxAttemts;
         this.attemptsUsed = 0;
         this.attemptsHistory = new ArrayList<>();
         this.status = Status.IN_PROGRESS;
-        this.diction = diction;
+        this.dictionary = dictionary;
     }
 
-    public static Game startGame(List<String> dict, int maxAttemts, long seed) {
-        if (dict == null || dict.isEmpty()) {
-            throw new IllegalArgumentException(" Game.java  |  Словарь пуст!");
-        }
+    public static Game startGame(Dictionary dictionary, int maxAttemts, long seed) {
         if (maxAttemts <= 0) {
             throw new IllegalArgumentException(" Game.java |   maxAttempts должен быть больше 0");
         }
 
-        String ans = Randompick.pick(dict, seed);
-        Set<String> dictSet = Set.copyOf(dict);
-        return new Game(ans, maxAttemts, dictSet);
+        String ans = Randompick.pick(dictionary, seed);
+        return new Game(ans, maxAttemts, dictionary);
     }
 
-    public static Game createWithAnswer(String answer, int maxAttempts, List<String> dict) {
-        Set<String> dictSet = Set.copyOf(dict);
-        return new Game(answer, maxAttempts, dictSet);
+    public static Game createWithAnswer(String answer, int maxAttempts, Dictionary dictionary) {
+        if (maxAttempts <= 0) {
+            throw new IllegalArgumentException(" Game.java |   maxAttempts должен быть больше 0");
+        }
+        if (!dictionary.containsWord(answer)) {
+            throw new IllegalArgumentException("Game | ответ нет в словаре: " + answer);
+        }
+        return new Game(answer, maxAttempts, dictionary);
     }
 
     public String ans() {
@@ -86,7 +86,7 @@ public final class Game {
     }
 
     private boolean isValidGuess(String normalGuess) {
-        return WordValidator.isGood(normalGuess) && diction.contains(normalGuess);
+        return WordValidator.isGood(normalGuess) && dictionary.containsWord(normalGuess);
     }
 
     private void recordValidGuess(String normalGuess) {

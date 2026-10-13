@@ -40,9 +40,9 @@ public final class Main {
             return;
         }
 
-        List<String> dict;
+        Dictionary dict;
         try {
-            dict = Wordloading.load(WORD);
+            dict = new Dictionary(Wordloading.load(WORD));
         } catch (IllegalArgumentException | UncheckedIOException err) {
             System.err.println("Main.java | Ошибка загрузки файла в список: " + err);
             System.err.flush();
@@ -69,7 +69,7 @@ public final class Main {
         System.out.flush();
     }
 
-    private static boolean handleMenuChoice(String in, Scanner scan, List<String> dict, Statistic stats) {
+    private static boolean handleMenuChoice(String in, Scanner scan, Dictionary dict, Statistic stats) {
         return switch (in) {
             case "1" -> {
                 playGame(scan, dict, stats);
@@ -119,7 +119,7 @@ public final class Main {
         System.out.flush();
     }
 
-    private static void playGame(Scanner scan, List<String> diction, Statistic stats) {
+    private static void playGame(Scanner scan, Dictionary diction, Statistic stats) {
         long seed = System.currentTimeMillis();
         Game game = Game.startGame(diction, MAX_ATTEMPTS, seed);
         int hintsUsed = 0;
@@ -263,11 +263,9 @@ public final class Main {
     private static Game createCheckGame(CheckArgs parsed) {
         String answer = parsed.answer();
         if (answer != null) {
-            List<String> dict = new ArrayList<>(parsed.guesses());
-            if (!dict.contains(answer)) {
-                dict.add(answer);
-            }
-            return Game.createWithAnswer(answer, MAX_ATTEMPTS, dict);
+            List<String> words = new ArrayList<>(parsed.guesses());
+            words.add(answer);
+            return Game.createWithAnswer(answer, MAX_ATTEMPTS, new Dictionary(words));
         }
 
         Long seed = parsed.seed();
@@ -275,9 +273,9 @@ public final class Main {
             return null;
         }
 
-        List<String> dict;
+        Dictionary dict;
         try {
-            dict = Wordloading.load(WORD);
+            dict = new Dictionary(Wordloading.load(WORD));
         } catch (IllegalArgumentException | UncheckedIOException e) {
             System.err.println("Main.java | Ошибка загрузки словаря: " + e);
             System.err.flush();

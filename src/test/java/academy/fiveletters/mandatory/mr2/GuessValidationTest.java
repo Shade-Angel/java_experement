@@ -2,9 +2,9 @@ package academy.fiveletters.mandatory.mr2;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import academy.fiveletters.Dictionary;
 import academy.fiveletters.Game;
 import academy.fiveletters.GuessRessult;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -14,7 +14,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 @DisplayName("MR2. Валидация ввода")
 class GuessValidationTest {
 
-    private final List<String> dict = List.of("озеро", "сорок", "арбуз");
+    private final Dictionary dict = Dictionary.of("озеро", "сорок", "арбуз");
 
     private Game newGame() {
         return Game.createWithAnswer("озеро", 6, dict);

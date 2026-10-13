@@ -2,9 +2,9 @@ package academy.fiveletters.mandatory.mr1;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import academy.fiveletters.Dictionary;
 import academy.fiveletters.Randompick;
 import academy.fiveletters.Wordloading;
-import java.util.List;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -15,7 +15,7 @@ class SeedTest {
     @Test
     @DisplayName("Одинаковый seed даёт одинаковое загаданное слово")
     void sameSeedProducesSameAnswer() {
-        List<String> words = Wordloading.load("/dictionary.txt");
+        Dictionary words = new Dictionary(Wordloading.load("/dictionary.txt"));
 
         String first = Randompick.pick(words, 42L);
         String second = Randompick.pick(words, 42L);
@@ -25,7 +25,7 @@ class SeedTest {
     @Test
     @DisplayName("Разные seed'ы дают разные слова хотя бы иногда")
     void differentSeedsProduceDifferentAnswers() {
-        List<String> words = Wordloading.load("/dictionary.txt");
+        Dictionary words = new Dictionary(Wordloading.load("/dictionary.txt"));
 
         String first = Randompick.pick(words, 1L);
         boolean foundDiff = false;
