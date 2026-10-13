@@ -21,6 +21,7 @@ public final class Wordloading {
         try (var reader = new BufferedReader(new InputStreamReader(istream, StandardCharsets.UTF_8))) {
             List<String> words = reader.lines()
                     .map(String::strip)
+                    .map(String::toLowerCase)
                     .filter(line -> !line.isEmpty() && !line.startsWith("#"))
                     .toList();
 

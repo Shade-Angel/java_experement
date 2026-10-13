@@ -3,7 +3,6 @@ package academy.fiveletters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 public final class Game {
     private static final int WORD_LEN = 5;
@@ -32,13 +31,13 @@ public final class Game {
             throw new IllegalArgumentException(" Game.java |   maxAttempts должен быть больше 0");
         }
 
-        String ans = Randompick.pick(dict, seed).toLowerCase();
-        Set<String> dictSet = dict.stream().map(String::toLowerCase).collect(Collectors.toSet());
+        String ans = Randompick.pick(dict, seed);
+        Set<String> dictSet = Set.copyOf(dict);
         return new Game(ans, maxAttemts, dictSet);
     }
 
     public static Game createWithAnswer(String answer, int maxAttempts, List<String> dict) {
-        Set<String> dictSet = dict.stream().map(String::toLowerCase).collect(Collectors.toSet());
+        Set<String> dictSet = Set.copyOf(dict);
         return new Game(answer, maxAttempts, dictSet);
     }
 

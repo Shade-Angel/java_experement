@@ -28,10 +28,9 @@ public class GameTest {
         assertThat(game.history()).containsExactly("озеро");
     }
 
-
-    @Test 
+    @Test
     @DisplayName("Игрок если проигрывает")
-    void playerLoss(){
+    void playerLoss() {
         List<String> dict = List.of("озеро", "сорок", "арбуз", "книга");
         Game game = Game.createWithAnswer("озеро", 2, dict);
 
